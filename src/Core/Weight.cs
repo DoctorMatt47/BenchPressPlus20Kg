@@ -11,25 +11,39 @@ public record Weight
     private const double LbToKg = 0.45359237;
     private const double KgToLb = 1 / LbToKg;
 
-    private Weight(decimal kg) => InKg = kg;
+    private Weight(decimal kg, Unit unit)
+    {
+        InKg = kg;
+        InUnit = unit;
+    }
 
+    public Unit InUnit { get; set; }
     public decimal InKg { get; }
-
     public decimal InLb => InKg * (decimal) KgToLb;
 
     public static Weight FromUnit(decimal weight, Unit unit) => unit switch
     {
-        Unit.Kg => new Weight(weight),
-        Unit.Lb => new Weight(weight * (decimal) LbToKg),
+        Unit.Kg => new Weight(weight, unit),
+        Unit.Lb => new Weight(weight * (decimal) LbToKg, unit),
         _ => throw new InvalidOperationException(),
     };
 
-    public static Weight operator *(Weight weight, decimal multiplier) => new(weight.InKg * multiplier);
-
-    public string ToString(Unit unit) => unit switch
+    public static Weight operator *(Weight weight, decimal multiplier)
     {
-        Unit.Kg => $"{InKg:#.###}kg",
-        Unit.Lb => $"{InLb}lb",
+        return new Weight(weight.InKg * multiplier, weight.InUnit);
+    }
+
+    public override string ToString() => InUnit switch
+    {
+        Unit.Kg => $"{InKg:#.###}",
+        Unit.Lb => $"{InLb:#.###}",
+        _ => throw new InvalidOperationException(),
+    };
+    
+    public Weight Round() => InUnit switch
+    {
+        Unit.Kg => new Weight(Math.Round(InKg / 2.5m) * 2.5m, Unit.Kg),
+        Unit.Lb => new Weight(Math.Round(InLb), Unit.Lb),
         _ => throw new InvalidOperationException(),
     };
 }

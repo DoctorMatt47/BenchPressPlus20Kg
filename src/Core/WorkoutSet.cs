@@ -21,14 +21,16 @@ public record WorkoutSet
 
     public static WorkoutSet FailureTest(decimal percent) => new(percent, reps: null, isFailureTest: true);
 
-    public string ToString(Weight orm, Weight.Unit unit = Weight.Unit.Kg)
+    public string ToString(Weight orm)
     {
-        var weightStr = (orm * Percent).ToString(unit);
-        var repsStr = Reps.HasValue ? $"{Reps}" : "?";
-        var isNegativeStr = IsNegative ? " negative" : "";
-        var isFailureTestStr = IsFailureTest ? " test" : "";
+        var weight = (orm * Percent).Round();
+        var repsStr = (Reps, IsNegative, IsFailureTest) switch
+        {
+            (_, _, true) => "?",
+            (_, true, _) => "1/2",
+            var (reps, _, _) => reps!.ToString(),
+        };
 
-        return
-            $"{weightStr} x {repsStr}{isNegativeStr}{isFailureTestStr}";
+        return $"{weight} x {repsStr}";
     }
 }
