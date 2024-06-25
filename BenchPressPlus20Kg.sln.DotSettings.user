@@ -1,8 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Docto\AppData\Local\JetBrains\Rider2024.1\resharper-host\temp\Rider\vAny\CoverageData\_BenchPressPlus20Kg.-2129802124\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=77620577_002D21a8_002D4639_002D9263_002D6d7307c08be4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="WeightTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::072D6E18-346F-41C8-BD17-B4AFFCE4E6C3::net8.0::BenchPressPlus20Kg.UnitTests.Core.WeightTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::072D6E18-346F-41C8-BD17-B4AFFCE4E6C3::net8.0::BenchPressPlus20Kg.UnitTests.Core.WorkoutSetTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
