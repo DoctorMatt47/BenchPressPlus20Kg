@@ -1,17 +1,35 @@
 namespace BenchPressPlus20Kg.Core;
 
-public class Weight
+public record Weight
 {
+    public enum Unit
+    {
+        Kg,
+        Lb,
+    }
+    
     private const double LbToKg = 0.45359237;
     private const double KgToLb = 1 / LbToKg;
 
-    public double InKg { get; }
+    public decimal InKg { get; }
 
-    public double InLb => InKg * KgToLb;
+    public decimal InLb => InKg * (decimal) KgToLb;
     
-    private Weight(double kg) => InKg = kg;
+    private Weight(decimal kg) => InKg = kg;
 
-    public static Weight FromKg(int kg) => new(kg);
+    public static Weight FromKg(decimal kg) => new(kg);
     
-    public static Weight FromLb(int lb) => new(lb * LbToKg);
+    public static Weight FromLb(decimal lb) => new(lb * (decimal) LbToKg);
+    
+    public static Weight operator *(Weight weight, decimal multiplier) => new(weight.InKg * multiplier);
+    
+    public string ToString(Unit unit)
+    {
+        unit switch
+        {
+            Unit.Kg => $"{InKg} kg",
+            Unit.Lb => $"{InLb} lb",
+            _ => throw new InvalidOperationException(),
+        }
+    }
 }

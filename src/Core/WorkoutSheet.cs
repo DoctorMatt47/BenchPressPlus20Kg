@@ -1,68 +1,31 @@
-using System.Collections.Frozen;
+// ReSharper disable ArgumentsStyleLiteral
 
 namespace BenchPressPlus20Kg.Core;
 
-public record WorkoutSetWithoutWeight
-{
-    public bool IsNegative { get; }
-    public bool IsFailureTest { get; }
-    public int? Reps { get; }
-
-    private WorkoutSetWithoutWeight(int? reps, bool isNegative = false, bool isFailureTest = false)
-    {
-        IsNegative = isNegative;
-        IsFailureTest = isFailureTest;
-        Reps = reps;
-    }
-
-    public static WorkoutSetWithoutWeight FromReps(int reps) => new(reps);
-
-    public static WorkoutSetWithoutWeight Negative() => new(reps: 1, isNegative: true);
-
-    public static WorkoutSetWithoutWeight FailureTest() => new(reps: null, isFailureTest: true);
-}
-
-public record WorkoutSet
-{
-    public Weight Weight { get; }
-    public bool IsNegative { get; }
-    public bool IsFailureTest { get; }
-    public int? Reps { get; }
-    
-    public WorkoutSet(WorkoutSetWithoutWeight setWithoutWeight, Weight weight)
-    {
-        IsNegative = setWithoutWeight.IsNegative;
-        IsFailureTest = setWithoutWeight.IsFailureTest;
-        Reps = setWithoutWeight.Reps;
-        Weight = weight;
-    }
-}
-
 public class WorkoutSheet
 {
-    public FrozenDictionary<int, List<WorkoutSetWithoutWeight>> Workouts { get; } =
-        new List<List<IEnumerable<WorkoutSetWithoutWeight>>>
+    public IEnumerable<IEnumerable<WorkoutSet>> Workouts { get; } =
+        new List<List<IEnumerable<WorkoutSet>>>
             {
-                new () {Sets(count: 1, reps: 6), Sets(count: 2, reps: 5), Sets(count: 2, reps: 4)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 2), Sets(count: 1, isNegative: true)},
-                new () {Sets(count: 1, reps: 6), Sets(count: 2, reps: 5), Sets(count: 2, reps: 4)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 2), Sets(count: 1, isNegative: true)},
-                new () {Sets(count: 1, reps: 6), Sets(count: 2, reps: 5), Sets(count: 1, isFailureTest: true)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 2), Sets(count: 1, isNegative: true)},
-                new () {Sets(count: 2, reps: 5), Sets(count: 2, reps: 3), Sets(count: 1, isFailureTest: true)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 1), Sets(count: 1, isNegative: true)},
-                new () {Sets(count: 2, reps: 5), Sets(count: 2, reps: 3), Sets(count: 1, isFailureTest: true)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 2), Sets(count: 1, reps: 1)},
-                new () {Sets(count: 2, reps: 5), Sets(count: 2, reps: 3), Sets(count: 1, isFailureTest: true)},
-                new () {Sets(count: 2, reps: 3), Sets(count: 2, reps: 2), Sets(count: 1, reps: 1)},
-                new () {Sets(count: 1, reps: 5), Sets(count: 2, reps: 3), Sets(count: 2, reps: 2)},
-                new () {Sets(count: 1, reps: 3), Sets(count: 1, reps: 2), Sets(count: 1, reps: 1)},
+                new() {Sets(0.75m, 1, 6), Sets(0.8m, 2, 5), Sets(0.8m, 2, 4)},
+                new() {Sets(0.85m, 2, 3), Sets(0.9m, 2, 2), Sets(1m, 1, isNegative: true)},
+                new() {Sets(0.75m, 1, 6), Sets(0.8m, 2, 5), Sets(0.85m, 2, 4)},
+                new() {Sets(0.9m, 2, 3), Sets(0.95m, 2, 2), Sets(1.05m, 1, isNegative: true)},
+                new() {Sets(0.8m, 1, 6), Sets(0.85m, 2, 5), Sets(0.9m, 1, isFailureTest: true)},
+                new() {Sets(0.9m, 2, 3), Sets(1m, 2, 2), Sets(1.1m, 1, isNegative: true)},
+                new() {Sets(0.85m, 2, 5), Sets(0.95m, 2, 3), Sets(0.95m, 1, isFailureTest: true)},
+                new() {Sets(0.95m, 2, 3), Sets(1.05m, 2, 1), Sets(1.15m, 1, isNegative: true)},
+                new() {Sets(0.9m, 2, 5), Sets(1m, 2, 3), Sets(1m, 1, isFailureTest: true)},
+                new() {Sets(1m, 2, 3), Sets(1.1m, 2, 2), Sets(1.1m, 1, 1)},
+                new() {Sets(0.95m, 2, 5), Sets(1m, 2, 3), Sets(1.05m, 1, isFailureTest: true)},
+                new() {Sets(1.0m, 2, 3), Sets(1.1m, 2, 2), Sets(1.15m, 1, 1)},
+                new() {Sets(1m, 1, 5), Sets(1.1m, 2, 3), Sets(1.15m, 2, 2)},
+                new() {Sets(1.05m, 1, 3), Sets(1.15m, 1, 2), Sets(1.20m, 1, 1)},
             }
-            .SelectMany(x => x)
-            .Select((x, i) => (x, i))
-            .ToFrozenDictionary(t => t.i, t => t.x.ToList());
+            .Select(x => x.SelectMany(y => y));
 
-    private static IEnumerable<WorkoutSetWithoutWeight> Sets(
+    private static IEnumerable<WorkoutSet> Sets(
+        decimal percent,
         int count,
         int? reps = null,
         bool isNegative = false,
@@ -72,9 +35,9 @@ public class WorkoutSheet
         {
             yield return (isNegative, isUntilFailure: isFailureTest) switch
             {
-                (false, false) => WorkoutSetWithoutWeight.FromReps(reps!.Value),
-                (true, false) => WorkoutSetWithoutWeight.Negative(),
-                (false, true) => WorkoutSetWithoutWeight.FailureTest(),
+                (false, false) => WorkoutSet.FromReps(percent, reps!.Value),
+                (true, false) => WorkoutSet.Negative(percent),
+                (false, true) => WorkoutSet.FailureTest(percent),
                 _ => throw new InvalidOperationException(),
             };
         }
