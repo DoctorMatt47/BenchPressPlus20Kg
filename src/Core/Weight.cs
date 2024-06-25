@@ -28,8 +28,8 @@ public record Weight
 
     public string ToString(Unit unit) => unit switch
     {
-        Unit.Kg => $"{InKg} kg",
-        Unit.Lb => $"{InLb} lb",
+        Unit.Kg => $"{InKg:#.###}kg",
+        Unit.Lb => $"{InLb}lb",
         _ => throw new InvalidOperationException(),
     };
 }

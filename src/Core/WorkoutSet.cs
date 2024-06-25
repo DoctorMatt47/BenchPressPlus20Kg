@@ -26,7 +26,7 @@ public record WorkoutSet
         var weightStr = (orm * Percent).ToString(unit);
         var repsStr = Reps.HasValue ? $"{Reps}" : "?";
         var isNegativeStr = IsNegative ? " negative" : "";
-        var isFailureTestStr = IsFailureTest ? " failure test" : "";
+        var isFailureTestStr = IsFailureTest ? " test" : "";
 
         return
             $"{weightStr} x {repsStr}{isNegativeStr}{isFailureTestStr}";
