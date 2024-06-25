@@ -2,11 +2,6 @@
 
 public record WorkoutSet
 {
-    public decimal Percent { get; }
-    public bool IsNegative { get; }
-    public bool IsFailureTest { get; }
-    public int? Reps { get; }
-
     private WorkoutSet(decimal percent, int? reps, bool isNegative = false, bool isFailureTest = false)
     {
         Percent = percent;
@@ -14,6 +9,11 @@ public record WorkoutSet
         IsFailureTest = isFailureTest;
         Reps = reps;
     }
+
+    public decimal Percent { get; }
+    public bool IsNegative { get; }
+    public bool IsFailureTest { get; }
+    public int? Reps { get; }
 
     public static WorkoutSet FromReps(decimal percent, int reps) => new(percent, reps);
 
@@ -24,7 +24,11 @@ public record WorkoutSet
     public string ToString(Weight orm, Weight.Unit unit = Weight.Unit.Kg)
     {
         var weightStr = (orm * Percent).ToString(unit);
+        var repsStr = Reps.HasValue ? $"{Reps}" : "?";
+        var isNegativeStr = IsNegative ? " negative" : "";
+        var isFailureTestStr = IsFailureTest ? " failure test" : "";
+
         return
-            $"{weightStr} x {(Reps.HasValue ? $"{Reps}" : "?")}{(IsNegative ? " negative" : "")}{(IsFailureTest ? " failure test" : "")}";
+            $"{weightStr} x {repsStr}{isNegativeStr}{isFailureTestStr}";
     }
 }

@@ -10,5 +10,4 @@ var str = workoutSheet.Workouts
     .Select(workout => string.Join(Environment.NewLine, workout.Select(set => set.ToString(orm))))
     .Select((str, i) => $"Workout {i}:{Environment.NewLine}" + str);
 
-
-Console.WriteLine(string.Join(Environment.NewLine, str));
+Console.WriteLine(string.Join($"{Environment.NewLine}{Environment.NewLine}", str));
