@@ -24,6 +24,7 @@ public record WorkoutSet
     public string ToString(Weight orm)
     {
         var weight = (orm * Percent).Round();
+        
         var repsStr = (Reps, IsNegative, IsFailureTest) switch
         {
             (_, _, true) => "?",

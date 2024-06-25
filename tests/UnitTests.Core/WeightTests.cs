@@ -1,14 +1,50 @@
 using BenchPressPlus20Kg.Core;
 using Bogus;
+using FluentAssertions;
 
 namespace BenchPressPlus20Kg.UnitTests.Core;
 
 public class WeightTests
 {
-    private const double LbToKg = 0.45359237;
-    private const double KgToLb = 1 / LbToKg;
-
     private readonly Faker _faker = new();
-
-
+    
+    [Fact]
+    public void FromKg_ReturnWeightInKg()
+    {
+        // Arrange
+        var weight = _faker.Random.Decimal();
+        
+        // Act
+        var result = Weight.FromUnit(weight, Weight.Unit.Kg);
+        
+        // Assert
+        result.InKg.Should().Be(weight);
+    }
+    
+    [Fact]
+    public void FromLb_ReturnWeightInLb()
+    {
+        // Arrange
+        var weight = _faker.Random.Decimal();
+        
+        // Act
+        var result = Weight.FromUnit(weight, Weight.Unit.Lb);
+        
+        // Assert
+        result.InLb.Should().Be(weight);
+    }
+    
+    [Fact]
+    public void FromUnit_ReturnWeightInUnit()
+    {
+        // Arrange
+        var weight = _faker.Random.Decimal();
+        var unit = _faker.PickRandom<Weight.Unit>();
+        
+        // Act
+        var result = Weight.FromUnit(weight, unit);
+        
+        // Assert
+        result.InUnit.Should().Be(unit);
+    }
 }

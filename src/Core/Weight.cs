@@ -8,8 +8,8 @@ public record Weight
         Lb,
     }
 
-    private const double LbToKg = 0.45359237;
-    private const double KgToLb = 1 / LbToKg;
+    private const decimal LbToKg = 0.45359237m;
+    private const decimal KgToLb = 1 / LbToKg;
 
     private Weight(decimal kg, Unit unit)
     {
@@ -19,12 +19,12 @@ public record Weight
 
     public Unit InUnit { get; set; }
     public decimal InKg { get; }
-    public decimal InLb => InKg * (decimal) KgToLb;
+    public decimal InLb => InKg * KgToLb;
 
     public static Weight FromUnit(decimal weight, Unit unit) => unit switch
     {
         Unit.Kg => new Weight(weight, unit),
-        Unit.Lb => new Weight(weight * (decimal) LbToKg, unit),
+        Unit.Lb => new Weight(weight * LbToKg, unit),
         _ => throw new InvalidOperationException(),
     };
 
