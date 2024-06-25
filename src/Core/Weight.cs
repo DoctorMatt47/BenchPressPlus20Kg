@@ -17,14 +17,10 @@ public record Weight
 
     public decimal InLb => InKg * (decimal) KgToLb;
 
-    public static Weight FromKg(decimal kg) => new(kg);
-
-    public static Weight FromLb(decimal lb) => new(lb * (decimal) LbToKg);
-
-    public static Weight FromUnit(decimal n, Unit unit) => unit switch
+    public static Weight FromUnit(decimal weight, Unit unit) => unit switch
     {
-        Unit.Kg => FromKg(n),
-        Unit.Lb => FromLb(n),
+        Unit.Kg => new Weight(weight),
+        Unit.Lb => new Weight(weight * (decimal) LbToKg),
         _ => throw new InvalidOperationException(),
     };
 
