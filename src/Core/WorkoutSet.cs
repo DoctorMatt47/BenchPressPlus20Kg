@@ -1,30 +1,43 @@
 ﻿namespace BenchPressPlus20Kg.Core;
 
-public record WorkoutSet
+public abstract record WorkoutSetBase
 {
-    private WorkoutSet(decimal percent, int? reps, bool isNegative = false, bool isFailureTest = false)
-    {
-        Percent = percent;
-        IsNegative = isNegative;
-        IsFailureTest = isFailureTest;
-        Reps = reps;
-    }
+    public int? Reps { get; protected init; }
+    public bool IsNegative { get; protected init; }
+    public bool IsFailureTest { get; protected init; }
+}
 
+public record WorkoutSet : WorkoutSetBase
+{
     public decimal Percent { get; }
-    public bool IsNegative { get; }
-    public bool IsFailureTest { get; }
-    public int? Reps { get; }
 
-    public static WorkoutSet FromReps(decimal percent, int reps) => new(percent, reps);
+    private WorkoutSet(decimal percent) => Percent = percent;
 
-    public static WorkoutSet Negative(decimal percent) => new(percent, reps: 1, isNegative: true);
+    public static WorkoutSet FromReps(decimal percent, int reps) => new(percent) { Reps = reps };
 
-    public static WorkoutSet FailureTest(decimal percent) => new(percent, reps: null, isFailureTest: true);
+    public static WorkoutSet Negative(decimal percent) => new(percent) { IsNegative = true };
 
-    public string ToString(Weight orm)
+    public static WorkoutSet FailureTest(decimal percent) => new(percent) { IsFailureTest = true };
+}
+
+public record WorkoutSetAbsolute : WorkoutSetBase
+{
+    public Weight Weight { get; }
+
+    private WorkoutSetAbsolute(Weight weight) => Weight = weight;
+    
+    public static WorkoutSetAbsolute FromRelative(Weight orm, WorkoutSet relative)
     {
-        var weight = (orm * Percent).Round();
-        
+        return new WorkoutSetAbsolute(orm * relative.Percent)
+        {
+            Reps = relative.Reps,
+            IsNegative = relative.IsNegative,
+            IsFailureTest = relative.IsFailureTest,
+        };
+    }
+    
+    public override string ToString()
+    {
         var repsStr = (Reps, IsNegative, IsFailureTest) switch
         {
             (_, _, true) => "?",
@@ -32,6 +45,6 @@ public record WorkoutSet
             var (reps, _, _) => reps!.ToString(),
         };
 
-        return $"{weight} x {repsStr}";
+        return $"{Weight.Round()} x {repsStr}";
     }
 }

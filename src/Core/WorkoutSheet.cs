@@ -4,7 +4,7 @@ namespace BenchPressPlus20Kg.Core;
 
 public class WorkoutSheet
 {
-    public IEnumerable<IEnumerable<WorkoutSet>> Workouts { get; } =
+    public IEnumerable<IEnumerable<WorkoutSet>> WorkoutsRelative { get; } =
         new List<List<IEnumerable<WorkoutSet>>>
             {
                 new() {Sets(0.75m, 1, 6), Sets(0.8m, 2, 5), Sets(0.8m, 2, 4)},
@@ -24,6 +24,11 @@ public class WorkoutSheet
             }
             .Select(x => x.SelectMany(y => y));
 
+    public IEnumerable<IEnumerable<WorkoutSetAbsolute>> WorkoutsAbsolute(Weight orm)
+    {
+        return WorkoutsRelative.Select(workout => workout.Select(set => WorkoutSetAbsolute.FromRelative(orm, set)));
+    }
+
     private static IEnumerable<WorkoutSet> Sets(
         decimal percent,
         int count,
@@ -33,7 +38,7 @@ public class WorkoutSheet
     {
         for (var i = 0; i < count; i++)
         {
-            yield return (isNegative, isUntilFailure: isFailureTest) switch
+            yield return (isNegative, isFailureTest) switch
             {
                 (false, false) => WorkoutSet.FromReps(percent, reps!.Value),
                 (true, false) => WorkoutSet.Negative(percent),
