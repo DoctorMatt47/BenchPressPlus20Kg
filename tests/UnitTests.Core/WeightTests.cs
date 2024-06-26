@@ -9,7 +9,7 @@ public class WeightTests
     private readonly Faker _faker = new();
     
     [Fact]
-    public void FromKg_ReturnWeightInKg()
+    public void FromKg_ReturnsWeightInKg()
     {
         // Arrange
         var weight = _faker.Random.Decimal();
@@ -22,7 +22,7 @@ public class WeightTests
     }
     
     [Fact]
-    public void FromLb_ReturnWeightInLb()
+    public void FromLb_ReturnsWeightInLb()
     {
         // Arrange
         var weight = _faker.Random.Decimal();
@@ -35,7 +35,7 @@ public class WeightTests
     }
     
     [Fact]
-    public void FromUnit_ReturnWeightInUnit()
+    public void FromUnit_ReturnsWeightInUnit()
     {
         // Arrange
         var weight = _faker.Random.Decimal();

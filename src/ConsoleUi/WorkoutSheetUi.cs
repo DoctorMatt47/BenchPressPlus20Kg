@@ -7,7 +7,6 @@ public class WorkoutSheetUi(Weight orm)
 {
     public void Print()
     {
-        var workoutSheet = new WorkoutSheet();
         var table = new Table();
 
         table.Title($"Workout Sheet orm {orm}");
@@ -21,7 +20,7 @@ public class WorkoutSheetUi(Weight orm)
 
         var count = 1;
 
-        foreach (var workout in workoutSheet.WorkoutsAbsolute(orm))
+        foreach (var workout in WorkoutSheet.PlanRelative.ToAbsolute(orm).Workouts)
         {
             table.AddRow(
                 workout
