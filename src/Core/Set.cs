@@ -8,8 +8,10 @@ public abstract record Set
     public bool IsFailureTest { get; init; }
 }
 
-public record SetAbsolute(Weight Weight) : Set
+public record SetAbsolute : Set
 {
+    public required Weight Weight { get; init; }
+
     public override string ToString()
     {
         var repsStr = (Reps, IsNegative, IsFailureTest) switch
@@ -23,10 +25,13 @@ public record SetAbsolute(Weight Weight) : Set
     }
 }
 
-public record SetRelative(decimal Percent) : Set
+public record SetRelative : Set
 {
-    public SetAbsolute ToAbsolute(Weight weight) => new(weight * Percent)
+    public required decimal Percent { get; init; }
+
+    public SetAbsolute ToAbsolute(Weight weight) => new()
     {
+        Weight = weight * Percent,
         Ordinal = Ordinal,
         Reps = Reps,
         IsNegative = IsNegative,

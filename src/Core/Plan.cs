@@ -1,27 +1,63 @@
 namespace BenchPressPlus20Kg.Core;
 
-public class Plan<TWorkoutSet> where TWorkoutSet : Set
+public class Plan
 {
-    public required IReadOnlyList<IReadOnlyList<TWorkoutSet>> Workouts { get; init; }
-
-    public void Test(int workout, int reps)
+    public Plan(List<List<SetRelative>> relativePlan, Weight orm)
     {
-        var sets = Workouts[workout];
-        var testSet = sets.Select((set, i) => (set, i)).First(t => t.set.IsFailureTest);
-        
-    }
-}
+        RelativePlan = relativePlan;
+        CurrentOrm = orm;
 
-public static class PlanExtensions
-{
-    public static Plan<SetAbsolute> ToAbsolute(this Plan<SetRelative> relative, Weight orm)
-    {
-        var workouts = relative.Workouts
-            .Select(workout => workout
-                .Select(set => set.ToAbsolute(orm))
-                .ToList())
+        AbsoluteWorkouts = relativePlan
+            .Select(
+                (workout, i) => new Workout
+                {
+                    Sets = workout
+                        .Select(set => set.ToAbsolute(orm))
+                        .ToList(),
+                    Orm = orm,
+                    Ordinal = i + 1,
+                }
+            )
             .ToList();
+    }
+
+    public List<List<SetRelative>> RelativePlan { get; }
+    public List<Workout> AbsoluteWorkouts { get; }
+    public Weight CurrentOrm { get; private set; }
+
+    public void UpdateOrm(int startFromOrdinal, Weight orm)
+    {
+        for (var i = startFromOrdinal - 1; i < AbsoluteWorkouts.Count; i++)
+        {
+            var workout = AbsoluteWorkouts[i];
+            workout.Orm = orm;
+
+            workout.Sets = RelativePlan[i]
+                .Select(set => set.ToAbsolute(workout.Orm))
+                .ToList();
+        }
         
-        return new Plan<SetAbsolute> {Workouts = workouts};
+        CurrentOrm = orm;
+    }
+
+    public void DoneWorkout(int ordinal, int? lastSetReps = null)
+    {
+        var workout = AbsoluteWorkouts[ordinal - 1];
+        workout.Done(lastSetReps);
+
+        if (!workout.HasFailureTest)
+        {
+            return;
+        }
+
+        switch (lastSetReps!.Value)
+        {
+            case <= 1:
+                UpdateOrm(ordinal + 1, CurrentOrm.DecrementStep());
+                break;
+            case >= 5:
+                UpdateOrm(ordinal + 1, CurrentOrm.IncrementStep());
+                break;
+        }
     }
 }

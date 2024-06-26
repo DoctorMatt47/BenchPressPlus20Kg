@@ -10,6 +10,13 @@ public record Weight
 
     private const decimal LbToKg = 0.45359237m;
     private const decimal KgToLb = 1 / LbToKg;
+    
+    private decimal Step => InUnit switch
+    {
+        Unit.Kg => 2.5m,
+        Unit.Lb => 5m,
+        _ => throw new InvalidOperationException(),
+    };
 
     private Weight(decimal kg, Unit unit)
     {
@@ -20,6 +27,13 @@ public record Weight
     public Unit InUnit { get; set; }
     public decimal InKg { get; }
     public decimal InLb => InKg * KgToLb;
+
+    private decimal InUnitValue => InUnit switch
+    {
+        Unit.Kg => InKg,
+        Unit.Lb => InLb,
+        _ => throw new InvalidOperationException(),
+    };
 
     public static Weight FromUnit(decimal weight, Unit unit) => unit switch
     {
@@ -39,11 +53,9 @@ public record Weight
         Unit.Lb => $"{InLb:#.###}",
         _ => throw new InvalidOperationException(),
     };
-    
-    public Weight Round() => InUnit switch
-    {
-        Unit.Kg => new Weight(Math.Round(InKg / 2.5m) * 2.5m, Unit.Kg),
-        Unit.Lb => new Weight(Math.Round(InLb), Unit.Lb),
-        _ => throw new InvalidOperationException(),
-    };
+
+    public Weight Round() => new(Math.Round(InUnitValue / Step) * Step, InUnit);
+
+    public Weight IncrementStep() => new(InUnitValue + Step, InUnit);
+    public Weight DecrementStep() => new(InUnitValue - Step, InUnit);
 }
