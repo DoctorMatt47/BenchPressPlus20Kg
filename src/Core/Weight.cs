@@ -54,8 +54,8 @@ public record Weight
         _ => throw new InvalidOperationException(),
     };
 
-    public Weight Round() => new(Math.Round(InUnitValue / Step) * Step, InUnit);
+    public Weight Round() => FromUnit(Math.Round(InUnitValue / Step) * Step, InUnit);
 
-    public Weight IncrementStep() => new(InUnitValue + Step, InUnit);
-    public Weight DecrementStep() => new(InUnitValue - Step, InUnit);
+    public Weight IncrementStep() => FromUnit(InUnitValue + Step, InUnit);
+    public Weight DecrementStep() => FromUnit(InUnitValue - Step, InUnit);
 }

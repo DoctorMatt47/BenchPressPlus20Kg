@@ -22,17 +22,17 @@ public class WorkoutSheetUi(Weight orm)
 
         var plan = new Plan(WorkoutSheet.GetRelativePlan(), orm);
 
-        Enumerable.Range(start: 1, count: 10).ToList().ForEach(
-            i =>
-            {
-                if (plan.AbsoluteWorkouts[i - 1].HasFailureTest)
-                {
-                    plan.DoneWorkout(i, lastSetReps: 5);
-                    return;
-                }
-                
-                plan.DoneWorkout(i);
-            });
+        // Enumerable.Range(start: 1, count: 10).ToList().ForEach(
+        //     i =>
+        //     {
+        //         if (plan.AbsoluteWorkouts[i - 1].HasFailureTest)
+        //         {
+        //             plan.DoneWorkout(i, lastSetReps: 5);
+        //             return;
+        //         }
+        //         
+        //         plan.DoneWorkout(i);
+        //     });
         
         foreach (var workout in plan.AbsoluteWorkouts)
         {
