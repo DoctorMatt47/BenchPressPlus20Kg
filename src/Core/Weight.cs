@@ -2,14 +2,31 @@ namespace BenchPressPlus20Kg.Core;
 
 public record Weight
 {
+    public virtual bool Equals(Weight? other)
+    {
+        if (ReferenceEquals(objA: null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        return InLb == other.InLb;
+    }
+
+    public override int GetHashCode() => InLb.GetHashCode();
+
     public enum Unit
     {
         Kg,
         Lb,
     }
 
-    private const decimal LbToKg = 0.45359237m;
-    private const decimal KgToLb = 1 / LbToKg;
+    public const decimal LbToKg = 0.45359237m;
+    public const decimal KgToLb = 1 / LbToKg;
 
     private readonly decimal _lb;
 

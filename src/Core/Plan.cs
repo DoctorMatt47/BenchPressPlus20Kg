@@ -12,14 +12,18 @@ public class Plan(
 
     public void NextWorkout()
     {
-        var workout = Workouts[CurrentIndex];
+        var workout = Workouts[CurrentIndex++];
 
         if (!workout.HasFailureTest)
         {
             return;
         }
+        
+        var reps = getFailureTestReps();
+        
+        workout.Sets[^1] = workout.Sets[^1] with { Reps = reps };
 
-        switch (getFailureTestReps())
+        switch (reps)
         {
             case <= 1:
                 UpdateOrm(CurrentOrm.DecrementStep());
@@ -28,9 +32,6 @@ public class Plan(
                 UpdateOrm(CurrentOrm.IncrementStep());
                 break;
         }
-        
-        CurrentIndex++;
-        
     }
 
     private void UpdateOrm(Weight orm)

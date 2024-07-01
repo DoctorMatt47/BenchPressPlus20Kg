@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace BenchPressPlus20Kg.ConsoleUi;
 
-public class WorkoutSheetUi(Plan plan)
+public class WorkoutSheetUi(Plan plan, Weight.Unit unit)
 {
     public void Print()
     {
@@ -18,19 +18,33 @@ public class WorkoutSheetUi(Plan plan)
                 .Select(i => new TableColumn($"Set {i}"))
                 .ToArray()
         );
-        
+
+        table.AddColumn("Is Done");
+
         foreach (var workout in plan.Workouts)
         {
-            var sets = workout.Sets.Select(set => set.ToString()).ToList();
-            
-            table.AddRow(
-                    sets
-                    .Prepend(workout.Orm.ToString())
-                    .Prepend(workout.Ordinal.ToString())
-                    .ToArray()
-            );
+            table.AddRow(GetRow(workout));
         }
 
         AnsiConsole.Write(table);
+    }
+
+    private string[] GetRow(Workout workout)
+    {
+        var sets = workout.Sets.Select(set => set.ToString(unit)).ToList();
+
+        var rows = sets
+            .Prepend(workout.Orm.ToString(unit))
+            .Prepend(workout.Ordinal.ToString())
+            .ToList();
+        
+        if (rows.Count < 7)
+        {
+            rows.AddRange(Enumerable.Repeat(string.Empty, 7 - rows.Count));
+        }
+
+        return rows
+            .Append(workout.Ordinal < plan.CurrentIndex + 1 ? "Yes" : "No")
+            .ToArray();
     }
 }
