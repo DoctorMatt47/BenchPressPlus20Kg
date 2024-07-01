@@ -12,7 +12,8 @@ public record Set
     {
         var repsStr = (Reps, IsNegative, IsFailureTest) switch
         {
-            (_, _, true) => "?",
+            (null, _, true) => "?",
+            (var reps, _, true) => $"({reps})",
             (_, true, _) => "1/2",
             var (reps, _, _) => reps!.ToString(),
         };
