@@ -1,63 +1,52 @@
 namespace BenchPressPlus20Kg.Core;
 
-public class Plan
+public class Plan(
+    Weight orm,
+    Func<Weight, IEnumerable<Workout>> getWorkouts,
+    Func<int> getFailureTestReps)
 {
-    public Plan(List<List<SetRelative>> relativePlan, Weight orm)
+    public List<Workout> Workouts { get; } = getWorkouts(orm).ToList();
+    
+    public Weight CurrentOrm { get; private set; } = orm;
+    public int CurrentIndex { get; private set; }
+
+    public void NextWorkout()
     {
-        RelativePlan = relativePlan;
-        CurrentOrm = orm;
-
-        AbsoluteWorkouts = relativePlan
-            .Select(
-                (workout, i) => new Workout
-                {
-                    Sets = workout
-                        .Select(set => set.ToAbsolute(orm))
-                        .ToList(),
-                    Orm = orm,
-                    Ordinal = i + 1,
-                }
-            )
-            .ToList();
-    }
-
-    public List<List<SetRelative>> RelativePlan { get; }
-    public List<Workout> AbsoluteWorkouts { get; }
-    public Weight CurrentOrm { get; private set; }
-
-    public void UpdateOrm(int startFromOrdinal, Weight orm)
-    {
-        for (var i = startFromOrdinal - 1; i < AbsoluteWorkouts.Count; i++)
-        {
-            var workout = AbsoluteWorkouts[i];
-            workout.Orm = orm;
-
-            workout.Sets = RelativePlan[i]
-                .Select(set => set.ToAbsolute(workout.Orm))
-                .ToList();
-        }
-        
-        CurrentOrm = orm;
-    }
-
-    public void DoneWorkout(int ordinal, int? lastSetReps = null)
-    {
-        var workout = AbsoluteWorkouts[ordinal - 1];
-        workout.Done(lastSetReps);
+        var workout = Workouts[CurrentIndex];
 
         if (!workout.HasFailureTest)
         {
             return;
         }
 
-        switch (lastSetReps!.Value)
+        switch (getFailureTestReps())
         {
             case <= 1:
-                UpdateOrm(ordinal + 1, CurrentOrm.DecrementStep());
+                UpdateOrm(CurrentOrm.DecrementStep());
                 break;
             case >= 5:
-                UpdateOrm(ordinal + 1, CurrentOrm.IncrementStep());
+                UpdateOrm(CurrentOrm.IncrementStep());
                 break;
         }
+        
+        CurrentIndex++;
+        
     }
+
+    private void UpdateOrm(Weight orm)
+    {
+        var workouts = getWorkouts(orm).ToList();
+                
+        for (var i = CurrentIndex; i < Workouts.Count; i++)
+        {
+            Workouts[i] = Workouts[i] with
+            {
+                Orm = orm,
+                Sets = workouts[i].Sets,
+            };
+        }
+        
+        CurrentOrm = orm;
+    }
+
 }

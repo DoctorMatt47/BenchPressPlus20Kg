@@ -34,7 +34,7 @@ public class WorkoutSheetUi(Weight orm)
         //         plan.DoneWorkout(i);
         //     });
         
-        foreach (var workout in plan.AbsoluteWorkouts)
+        foreach (var workout in plan.Workouts)
         {
             var sets = workout.Select(set => set.ToString()).ToList();
             

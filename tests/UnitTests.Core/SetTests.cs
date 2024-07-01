@@ -70,7 +70,7 @@ public class SetTests
         var weight = Weight.FromUnit(_faker.Random.Decimal(), Weight.Unit.Kg);
         var reps = _faker.Random.Int();
         
-        var set = new SetAbsolute
+        var set = new Set
         {
             Reps = reps,
             Weight = weight,

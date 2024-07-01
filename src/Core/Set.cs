@@ -1,18 +1,14 @@
 ﻿namespace BenchPressPlus20Kg.Core;
 
-public abstract record Set
+public record Set
 {
-    public int? Ordinal { get; init; }
+    public required Weight Weight { get; init; }
+    public required int Ordinal { get; init; }
     public int? Reps { get; init; }
     public bool IsNegative { get; init; }
     public bool IsFailureTest { get; init; }
-}
 
-public record SetAbsolute : Set
-{
-    public required Weight Weight { get; init; }
-
-    public override string ToString()
+    public string ToString(Weight.Unit unit)
     {
         var repsStr = (Reps, IsNegative, IsFailureTest) switch
         {
@@ -21,20 +17,6 @@ public record SetAbsolute : Set
             var (reps, _, _) => reps!.ToString(),
         };
 
-        return $"{Weight.Round()} x {repsStr}";
+        return $"{Weight.ToString(unit)} x {repsStr}";
     }
-}
-
-public record SetRelative : Set
-{
-    public required decimal Percent { get; init; }
-
-    public SetAbsolute ToAbsolute(Weight weight) => new()
-    {
-        Weight = weight * Percent,
-        Ordinal = Ordinal,
-        Reps = Reps,
-        IsNegative = IsNegative,
-        IsFailureTest = IsFailureTest,
-    };
 }
