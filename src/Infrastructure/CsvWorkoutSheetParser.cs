@@ -9,7 +9,7 @@ internal record SheetSet(int Count, char Reps);
 
 internal record SheetWorkout(SheetSet A, SheetSet B, SheetSet C);
 
-public class Sheet(string path = "WorkoutSheet.csv")
+public class CsvWorkoutSheetParser(TextReader reader)
 {
     private Dictionary<Weight, IEnumerable<Workout>>? _sheet;
 
@@ -30,8 +30,7 @@ public class Sheet(string path = "WorkoutSheet.csv")
         {
             HasHeaderRecord = false,
         };
-
-        using var reader = new StreamReader(path);
+        
         using var csv = new CsvReader(reader, config);
 
         var records = csv.GetRecords<object>().Cast<IDictionary<string, object>>();
