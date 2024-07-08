@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Core", "tests\Uni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUi", "src\ConsoleUi\ConsoleUi.csproj", "{F3019B52-4E2F-403E-91B6-BD42C98D9CD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SheetParser", "src\SheetParser\SheetParser.csproj", "{6F2C8313-2F76-46EC-BDAC-5F7AB1C77142}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{6F2C8313-2F76-46EC-BDAC-5F7AB1C77142}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

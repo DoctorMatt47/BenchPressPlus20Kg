@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using BenchPressPlus20Kg.Domain;
-using BenchPressPlus20Kg.SheetParser;
+using BenchPressPlus20Kg.Infrastructure;
 
 var plan = new Plan(Weight.FromKg(107.5m), new Sheet().GetWorkouts, () => 1);
 
