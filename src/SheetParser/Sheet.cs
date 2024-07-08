@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using BenchPressPlus20Kg.Core;
+using BenchPressPlus20Kg.Domain;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -11,7 +11,7 @@ internal record SheetWorkout(SheetSet A, SheetSet B, SheetSet C);
 
 public class Sheet
 {
-    private const string Path = "WorkoutSheet.csv";
+    public string Path { get; set; } = "WorkoutSheet.csv";
 
     private Dictionary<Weight, IEnumerable<Workout>>? _sheet;
 

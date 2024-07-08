@@ -1,4 +1,4 @@
-﻿namespace BenchPressPlus20Kg.Core;
+﻿namespace BenchPressPlus20Kg.Domain;
 
 public record Set
 {

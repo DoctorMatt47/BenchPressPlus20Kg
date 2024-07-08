@@ -1,4 +1,4 @@
-using BenchPressPlus20Kg.Core;
+using BenchPressPlus20Kg.Domain;
 using Bogus;
 using FluentAssertions;
 

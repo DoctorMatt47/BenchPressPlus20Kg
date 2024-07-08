@@ -1,10 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+#
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ED34F424-84AF-45D1-905B-5817319B69C5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4C4A7CBD-A598-419D-8F83-CE99183F3192}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{062B5BFF-D75A-4802-8460-5A7B6FD53EAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{062B5BFF-D75A-4802-8460-5A7B6FD53EAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Core", "tests\UnitTests.Core\UnitTests.Core.csproj", "{072D6E18-346F-41C8-BD17-B4AFFCE4E6C3}"
 EndProject

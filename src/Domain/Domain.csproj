@@ -4,8 +4,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>BenchPressPlus20Kg.Core</AssemblyName>
-        <RootNamespace>BenchPressPlus20Kg.Core</RootNamespace>
+        <AssemblyName>BenchPressPlus20Kg.Domain</AssemblyName>
+        <RootNamespace>BenchPressPlus20Kg.Domain</RootNamespace>
     </PropertyGroup>
 
 </Project>
