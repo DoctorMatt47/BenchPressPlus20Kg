@@ -1,0 +1,34 @@
+﻿@using System.Reflection
+@inherits LayoutComponentBase
+@inject NavigationManager Navigator
+@inject HttpClient Http
+
+<div class="page">
+    <div class="content">
+        @foreach (var workout in _plan?.Workouts!)
+        {
+            <div>
+                @workout.Ordinal.
+                Orm: @workout.Orm.ToString(_unit)
+                @foreach (var set in workout.Sets)
+                {
+                    <div>@set.ToString(_unit)</div>
+                }
+            </div>
+            <br/>
+        }
+    </div>
+</div>
+
+@code {
+    private Plan? _plan;
+    private Weight.Unit _unit = Weight.Unit.Kg;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var stream = await Http.GetStreamAsync("WorkoutSheet.csv");
+        var sheet = new CsvWorkoutSheetParser(new StreamReader(stream));
+        _plan = new Plan(Weight.FromKg(107.5m), sheet.GetWorkouts, () => 1); 
+    }
+
+}
