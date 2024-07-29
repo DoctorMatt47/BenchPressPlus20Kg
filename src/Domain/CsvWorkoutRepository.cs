@@ -1,16 +1,17 @@
 ﻿using System.Globalization;
-using BenchPressPlus20Kg.Domain;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace BenchPressPlus20Kg.Infrastructure;
+namespace BenchPressPlus20Kg.Domain;
 
-internal record SheetSet(int Count, char Reps);
 
-internal record SheetWorkout(SheetSet A, SheetSet B, SheetSet C);
 
 public class CsvWorkoutRepository(TextReader reader) : IWorkoutRepository
 {
+    private record SheetSet(int Count, char Reps);
+
+    private record SheetWorkout(SheetSet A, SheetSet B, SheetSet C);
+    
     private readonly Dictionary<Weight, IEnumerable<Workout>> _sheet = LoadFromCsv(reader);
 
     public Task<IEnumerable<Workout>> GetWorkouts(Weight weight)

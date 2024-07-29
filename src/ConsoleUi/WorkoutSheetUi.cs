@@ -30,7 +30,7 @@ public class WorkoutSheetUi(IPlanRepository planRepository)
         AnsiConsole.Write(table);
     }
 
-    private static string[] GetRow(Plan plan, Workout workout, Weight.Unit unit)
+    private static string[] GetRow(Plan? plan, Workout workout, Weight.Unit unit)
     {
         var sets = workout.Sets.Select(set => set.ToString(unit)).ToList();
 

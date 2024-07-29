@@ -1,6 +1,5 @@
 ﻿using BenchPressPlus20Kg.ConsoleUi;
 using BenchPressPlus20Kg.Domain;
-using BenchPressPlus20Kg.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -36,16 +35,16 @@ internal class InMemoryPlanRepository(IWorkoutRepository workoutRepository) : IP
 {
     private static readonly Weight Orm = Weight.FromKg(105);
 
-    private Plan _plan = new()
+    private Plan? _plan = new()
     {
         Workouts = workoutRepository.GetWorkouts(Orm).Result.ToList(),
         CurrentOrm = Orm,
         CurrentIndex = 0,
     };
 
-    public Task<Plan> GetPlan() => Task.FromResult(_plan);
+    public Task<Plan?> GetPlan() => Task.FromResult(_plan);
 
-    public Task SavePlan(Plan plan)
+    public Task SavePlan(Plan? plan)
     {
         _plan = plan;
         return Task.CompletedTask;
@@ -56,6 +55,6 @@ internal class HardcodeFailureTestService : IFailureTestService
 {
     public int GetFailureTestReps()
     {
-        return 1;
+        return 4;
     }
 }

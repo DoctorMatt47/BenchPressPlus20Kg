@@ -12,7 +12,7 @@ public interface IFailureTestService
 
 public interface IPlanRepository
 {
-    Task<Plan> GetPlan();
+    Task<Plan?> GetPlan();
     Task SavePlan(Plan plan);
 }
 
@@ -29,6 +29,11 @@ public class PlanService(
     public async Task NextWorkout()
     {
         var plan = await repository.GetPlan();
+
+        if (plan is null)
+        {
+            throw new InvalidOperationException("Plan not found");
+        }
 
         var workout = plan.Workouts[plan.CurrentIndex++];
 

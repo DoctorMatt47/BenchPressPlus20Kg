@@ -1,11 +1,22 @@
 ﻿@inject NavigationManager Navigator
 @inject HttpClient Http
+@inject IWorkoutRepository WorkoutRepository
+@inject IPlanRepository PlanRepository
 @page "/"
 
 <PageTitle>Home</PageTitle>
 
 
 <div>
+    
+    @if (_plan == null)
+    {
+        <input type="number" @bind="_orm" />
+        <button @onclick="GeneratePlan">
+            Generate
+        </button>
+    }
+
     @foreach (var workout in _plan?.Workouts!)
     {
         <div>
@@ -22,13 +33,32 @@
 
 @code {
     private Plan? _plan;
+    private Weight? _orm;
     private Weight.Unit _unit = Weight.Unit.Kg;
 
     protected override async Task OnInitializedAsync()
     {
-        var stream = await Http.GetStreamAsync("WorkoutSheet.csv");
-        var sheet = new CsvWorkoutRepository(new StreamReader(stream));
-        _plan = new Plan(Weight.FromKg(107.5m), sheet.GetWorkouts, () => 1); 
+        _plan = await PlanRepository.GetPlan();
+        
+        if (_plan is null)
+        {
+            return;
+        }
+    }
+
+    private async Task GeneratePlan()
+    {
+        if (_orm is null)
+        {
+            return;
+        }
+
+        await PlanRepository.SavePlan(
+            new Plan
+            {
+                CurrentOrm = _orm,
+                Workouts = (await WorkoutRepository.GetWorkouts(_orm)).ToList(),
+            });
     }
 
 }
