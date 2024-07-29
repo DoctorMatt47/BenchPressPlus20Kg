@@ -27,7 +27,7 @@
     protected override async Task OnInitializedAsync()
     {
         var stream = await Http.GetStreamAsync("WorkoutSheet.csv");
-        var sheet = new CsvWorkoutSheetParser(new StreamReader(stream));
+        var sheet = new CsvWorkoutRepository(new StreamReader(stream));
         _plan = new Plan(Weight.FromKg(107.5m), sheet.GetWorkouts, () => 1); 
     }
 

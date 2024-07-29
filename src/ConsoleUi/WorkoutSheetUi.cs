@@ -3,11 +3,12 @@ using Spectre.Console;
 
 namespace BenchPressPlus20Kg.ConsoleUi;
 
-public class WorkoutSheetUi(Plan plan, Weight.Unit unit)
+public class WorkoutSheetUi(IPlanRepository planRepository)
 {
-    public void Print()
+    public async Task Print(Weight.Unit unit)
     {
         var table = new Table();
+        var plan = await planRepository.GetPlan();
 
         table.Title($"Workout Sheet orm {plan.CurrentOrm}");
         table.AddColumn("Day");
@@ -23,13 +24,13 @@ public class WorkoutSheetUi(Plan plan, Weight.Unit unit)
 
         foreach (var workout in plan.Workouts)
         {
-            table.AddRow(GetRow(workout));
+            table.AddRow(GetRow(plan, workout, unit));
         }
 
         AnsiConsole.Write(table);
     }
 
-    private string[] GetRow(Workout workout)
+    private static string[] GetRow(Plan plan, Workout workout, Weight.Unit unit)
     {
         var sets = workout.Sets.Select(set => set.ToString(unit)).ToList();
 

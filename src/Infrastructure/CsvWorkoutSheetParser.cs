@@ -9,21 +9,16 @@ internal record SheetSet(int Count, char Reps);
 
 internal record SheetWorkout(SheetSet A, SheetSet B, SheetSet C);
 
-public class CsvWorkoutSheetParser(TextReader reader)
+public class CsvWorkoutRepository(TextReader reader) : IWorkoutRepository
 {
-    private Dictionary<Weight, IEnumerable<Workout>>? _sheet;
+    private readonly Dictionary<Weight, IEnumerable<Workout>> _sheet = LoadFromCsv(reader);
 
-    public IEnumerable<Workout> GetWorkouts(Weight weight)
+    public Task<IEnumerable<Workout>> GetWorkouts(Weight weight)
     {
-        if (_sheet is null)
-        {
-            LoadFromCsv();
-        }
-        
-        return _sheet![weight];
+        return Task.FromResult(_sheet[weight]);
     }
 
-    private void LoadFromCsv()
+    private static Dictionary<Weight, IEnumerable<Workout>> LoadFromCsv(TextReader reader)
     {
         // ReSharper disable PossibleMultipleEnumeration
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -82,7 +77,7 @@ public class CsvWorkoutSheetParser(TextReader reader)
                     )
             );
 
-        _sheet = results;
+        return results;
         // ReSharper restore PossibleMultipleEnumeration
     }
 

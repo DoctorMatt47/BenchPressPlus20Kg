@@ -16,10 +16,15 @@ public interface IPlanRepository
     Task SavePlan(Plan plan);
 }
 
+public interface IPlanService
+{
+    Task NextWorkout();
+}
+
 public class PlanService(
     IPlanRepository repository,
     IWorkoutRepository workoutRepository,
-    IFailureTestService failureTestService)
+    IFailureTestService failureTestService) : IPlanService
 {
     public async Task NextWorkout()
     {
@@ -34,7 +39,7 @@ public class PlanService(
 
         var reps = failureTestService.GetFailureTestReps();
 
-        workout.Sets[^1] = workout.Sets[^1] with { Reps = reps };
+        workout.Sets[^1] = workout.Sets[^1] with {Reps = reps};
 
         var orm = reps switch
         {
@@ -50,11 +55,11 @@ public class PlanService(
 
         await repository.SavePlan(plan);
     }
-    
+
     private async Task UpdateOrm(Plan plan, Weight orm)
     {
         var workouts = (await workoutRepository.GetWorkouts(orm)).ToList();
-        
+
         for (var i = plan.CurrentIndex; i < workouts.Count; i++)
         {
             plan.Workouts[i] = workouts[i] with
@@ -63,7 +68,7 @@ public class PlanService(
                 Sets = workouts[i].Sets,
             };
         }
-        
+
         plan.CurrentOrm = orm;
     }
 }

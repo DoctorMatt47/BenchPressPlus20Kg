@@ -1,19 +1,61 @@
 ﻿using BenchPressPlus20Kg.ConsoleUi;
 using BenchPressPlus20Kg.Domain;
 using BenchPressPlus20Kg.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-var plan = new Plan(
-    Weight.FromKg(107.5m),
-    new CsvWorkoutSheetParser(new StreamReader("WorkoutSheet.csv")).GetWorkouts,
-    () => 1
-);
+var builder = Host.CreateDefaultBuilder(args);
 
-var ui = new WorkoutSheetUi(plan, Weight.Unit.Kg);
+builder.ConfigureServices(
+    (_, services) =>
+    {
+        using var reader = new StreamReader("WorkoutSheet.csv");
+        services.AddSingleton<IWorkoutRepository>(new CsvWorkoutRepository(reader));
+        services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
+        services.AddSingleton<IFailureTestService, HardcodeFailureTestService>();
+        services.AddSingleton<IPlanService, PlanService>();
+        services.AddSingleton<WorkoutSheetUi>();
+    });
 
-ui.Print();
+var host = builder.Build();
 
-foreach (var _ in Enumerable.Range(0, 14))
+const Weight.Unit unit = Weight.Unit.Kg;
+var ui = host.Services.GetRequiredService<WorkoutSheetUi>();
+var planService = host.Services.GetRequiredService<IPlanService>();
+
+await ui.Print(unit);
+
+foreach (var _ in Enumerable.Range(start: 0, count: 14))
 {
-    plan.NextWorkout();
-    ui.Print();
+    await planService.NextWorkout();
+}
+
+await ui.Print(unit);
+
+internal class InMemoryPlanRepository(IWorkoutRepository workoutRepository) : IPlanRepository
+{
+    private static readonly Weight Orm = Weight.FromKg(105);
+
+    private Plan _plan = new()
+    {
+        Workouts = workoutRepository.GetWorkouts(Orm).Result.ToList(),
+        CurrentOrm = Orm,
+        CurrentIndex = 0,
+    };
+
+    public Task<Plan> GetPlan() => Task.FromResult(_plan);
+
+    public Task SavePlan(Plan plan)
+    {
+        _plan = plan;
+        return Task.CompletedTask;
+    }
+}
+
+internal class HardcodeFailureTestService : IFailureTestService
+{
+    public int GetFailureTestReps()
+    {
+        return 1;
+    }
 }
