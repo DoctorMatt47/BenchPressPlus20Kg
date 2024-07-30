@@ -49,12 +49,18 @@ internal class InMemoryPlanRepository(IWorkoutRepository workoutRepository) : IP
         _plan = plan;
         return Task.CompletedTask;
     }
+
+    public Task DeletePlan()
+    {
+        _plan = null;
+        return Task.CompletedTask;
+    }
 }
 
 internal class HardcodeFailureTestService : IFailureTestService
 {
-    public int GetFailureTestReps()
+    public Task<int> GetFailureTestReps()
     {
-        return 4;
+        return Task.FromResult(4);
     }
 }

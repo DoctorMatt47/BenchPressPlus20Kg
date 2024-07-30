@@ -4,8 +4,6 @@ using CsvHelper.Configuration;
 
 namespace BenchPressPlus20Kg.Domain;
 
-
-
 public class CsvWorkoutRepository(TextReader reader) : IWorkoutRepository
 {
     private record SheetSet(int Count, char Reps);

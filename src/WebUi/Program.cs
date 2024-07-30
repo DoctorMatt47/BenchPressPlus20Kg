@@ -12,10 +12,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
 builder.Services.AddBlazoredLocalStorage();
 
-using var reader = new StreamReader("WorkoutSheet.csv");
+var httpClient = new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
+using var reader = new StreamReader(await httpClient.GetStreamAsync("WorkoutSheet.csv"));
 builder.Services.AddSingleton<IWorkoutRepository>(new CsvWorkoutRepository(reader));
-builder.Services.AddSingleton<IPlanRepository, LocalStoragePlanRepository>();
-builder.Services.AddSingleton<IFailureTestService, HardcodeFailureTestService>();
+builder.Services.AddSingleton<IFailureTestService, PromptFailureTestService>();
+builder.Services.AddSingleton<LocalStoragePlanRepository>();
+builder.Services.AddSingleton<IPlanRepository>(s => s.GetRequiredService<LocalStoragePlanRepository>());
 builder.Services.AddSingleton<IPlanService, PlanService>();
 
 await builder.Build().RunAsync();

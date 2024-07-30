@@ -1,0 +1,120 @@
+﻿@using WebUi.Services
+
+@inject NavigationManager Navigator
+@inject LocalStoragePlanRepository Repository
+@inject IPlanService PlanService
+
+@implements IDisposable
+
+@page "/plan"
+
+<PageTitle>Plan</PageTitle>
+
+<div>
+    @if (Repository.Plan is not null && Repository.Unit is not null)
+    {
+        <div class="m-2 p-4 bg-slate-800 border-2 border-slate-600 rounded text-center flex flex-col gap-3">
+            <div class="p-2 bg-slate-500 rounded text-slate-950">
+                Current ORM: @Repository.Plan!.CurrentOrm.ToString(Repository.Unit!.Value)
+            </div>
+            <table class="border-separate">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Orm</th>
+                    <th>Set 1</th>
+                    <th>Set 2</th>
+                    <th>Set 3</th>
+                    <th>Set 4</th>
+                    <th>Set 5</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var workout in Repository.Plan.Workouts)
+                {
+                    <tr class="my-5">
+                        <td>
+                            @if (Repository.Plan.CurrentIndex + 1 > workout.Ordinal)
+                            {
+                                <span>🟢</span>
+                            }
+                            else if (Repository.Plan.CurrentIndex + 1 == workout.Ordinal)
+                            {
+                                <span>🔵</span>
+                            }
+                            else
+                            {
+                                <span>⚪</span>
+                            }
+                        </td>
+                        <td class="">@workout.Ordinal</td>
+                        <td class="">
+                            @workout.Orm.ToString(Repository.Unit!.Value)
+                        </td>
+                        @foreach (var set in workout.Sets)
+                        {
+                            <td class="py-2 grid-rows-3">
+                                <div>
+                                    @set.Weight.ToString(Repository.Unit!.Value)
+                                </div>
+                                <div>
+                                    x
+                                </div>
+                                <div>
+                                    @(SetRepsToString(set))
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <button class="p-2 w-full bg-slate-300 rounded text-slate-950" @onclick="NextWorkout">
+                Next Workout
+            </button>
+            <button class="p-2 w-full bg-slate-300 rounded text-slate-950" @onclick="Reset">
+                Reset
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var plan = await Repository.GetPlan();
+        var unit = await Repository.GetUnit();
+
+        if (plan is null || unit is null)
+        {
+            Navigator.NavigateTo("/settings");
+        }
+
+        Repository.OnChange += StateHasChanged;
+    }
+
+    private async Task NextWorkout()
+    {
+        await PlanService.NextWorkout();
+        var plan = await Repository.GetPlan();
+        Console.WriteLine(plan!.CurrentIndex);
+    }
+
+    private async Task Reset()
+    {
+        await Repository.DeletePlan();
+        Navigator.NavigateTo("/settings");
+    }
+
+    public void Dispose()
+    {
+        Repository.OnChange -= StateHasChanged;
+    }
+
+    private string SetRepsToString(Set set)
+    {
+        return set.IsFailureTest ? "?" : set.IsNegative ? "1/2" : set.Reps!.ToString()!;
+    }
+}

@@ -1,0 +1,12 @@
+﻿@page "/"
+
+@inject IPlanRepository PlanRepository
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var plan = await PlanRepository.GetPlan();
+        NavigationManager.NavigateTo(plan is null ? "/settings" : "/plan");
+    }
+}

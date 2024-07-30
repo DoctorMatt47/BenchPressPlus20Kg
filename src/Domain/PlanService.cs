@@ -7,7 +7,7 @@ public interface IWorkoutRepository
 
 public interface IFailureTestService
 {
-    int GetFailureTestReps();
+    Task<int> GetFailureTestReps();
 }
 
 public interface IPlanRepository
@@ -18,7 +18,8 @@ public interface IPlanRepository
 
 public interface IPlanService
 {
-    Task NextWorkout();
+    Task<Plan> CreatePlan(Weight orm);
+    Task<Plan> NextWorkout();
 }
 
 public class PlanService(
@@ -26,7 +27,20 @@ public class PlanService(
     IWorkoutRepository workoutRepository,
     IFailureTestService failureTestService) : IPlanService
 {
-    public async Task NextWorkout()
+    public async Task<Plan> CreatePlan(Weight orm)
+    {
+        var plan = new Plan
+        {
+            CurrentOrm = orm,
+            Workouts = (await workoutRepository.GetWorkouts(orm)).ToList(),
+        };
+
+        await repository.SavePlan(plan);
+        
+        return plan;
+    }
+
+    public async Task<Plan> NextWorkout()
     {
         var plan = await repository.GetPlan();
 
@@ -37,28 +51,28 @@ public class PlanService(
 
         var workout = plan.Workouts[plan.CurrentIndex++];
 
-        if (!workout.HasFailureTest)
+        if (workout.HasFailureTest)
         {
-            return;
-        }
+                
+            var reps = await failureTestService.GetFailureTestReps();
 
-        var reps = failureTestService.GetFailureTestReps();
+            workout.Sets[^1] = workout.Sets[^1] with {Reps = reps};
 
-        workout.Sets[^1] = workout.Sets[^1] with {Reps = reps};
+            var orm = reps switch
+            {
+                <= 1 => plan.CurrentOrm.DecrementStep(),
+                >= 5 => plan.CurrentOrm.IncrementStep(),
+                _ => plan.CurrentOrm,
+            };
 
-        var orm = reps switch
-        {
-            <= 1 => plan.CurrentOrm.DecrementStep(),
-            >= 5 => plan.CurrentOrm.IncrementStep(),
-            _ => plan.CurrentOrm,
-        };
-
-        if (plan.CurrentOrm != orm)
-        {
-            await UpdateOrm(plan, orm);
+            if (plan.CurrentOrm != orm)
+            {
+                await UpdateOrm(plan, orm);
+            }
         }
 
         await repository.SavePlan(plan);
+        return plan;
     }
 
     private async Task UpdateOrm(Plan plan, Weight orm)
