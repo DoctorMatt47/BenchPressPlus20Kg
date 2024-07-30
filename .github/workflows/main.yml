@@ -1,0 +1,40 @@
+name: Build and Deploy Blazor WebAssembly App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+       
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
+
+    - name: Navigate to directory
+      run: cd ./src/WebUi
+      
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish the app
+      run: dotnet publish --configuration Release -o build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/wwwroot
+
+    - name: Configure GitHub Pages
+      run: |
+        git config --global user.email "doctormatt47@gmail.com"
+        git config --global user.name "doctormatt47"
+        echo your-github-username.github.io > build/wwwroot/CNAME
