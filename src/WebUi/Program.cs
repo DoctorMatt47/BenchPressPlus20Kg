@@ -14,6 +14,7 @@ builder.Services.AddBlazoredLocalStorage();
 
 var httpClient = new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
 using var reader = new StreamReader(await httpClient.GetStreamAsync("WorkoutSheet.csv"));
+
 builder.Services.AddSingleton<IWorkoutRepository>(new CsvWorkoutRepository(reader));
 builder.Services.AddSingleton<IFailureTestService, PromptFailureTestService>();
 builder.Services.AddSingleton<LocalStoragePlanRepository>();
