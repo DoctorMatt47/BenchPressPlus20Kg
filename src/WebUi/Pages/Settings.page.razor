@@ -1,5 +1,4 @@
 ﻿@page "/settings"
-@using System.Text.Json
 @using WebUi.Services
 
 @inject NavigationManager NavigationManager
@@ -64,7 +63,7 @@
     {
         await Repository.SaveUnit(_unit);
         await PlanService.CreatePlan(Weight.FromUnit(_orm, _unit));
-        NavigationManager.NavigateTo($"{NavigationManager.BaseUri}/plan");
+        NavigationManager.NavigateTo("plan");
     }
 
 }

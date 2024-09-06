@@ -8,8 +8,7 @@
     protected override async Task OnInitializedAsync()
     {
         var plan = await PlanRepository.GetPlan();
-        var uri = plan is null ? $"{NavigationManager.BaseUri}/settings" : $"{NavigationManager.BaseUri}/plan";
-        NavigationManager.NavigateTo(uri);
+        NavigationManager.NavigateTo(plan is null ? "settings" : "plan");
     }
 
 }
