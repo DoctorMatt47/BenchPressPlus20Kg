@@ -18,25 +18,22 @@ jobs:
       with:
         dotnet-version: '8.x'
 
-    - name: Navigate to directory
-      run: cd ./src/WebUi
-      
     - name: Restore dependencies
+      working-directory: ./src/WebUi
       run: dotnet restore
 
     - name: Publish the app
+      working-directory: ./src/WebUi
       run: dotnet publish --configuration Release -o build
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/wwwroot
+        publish_dir: ./src/WebUi/build/wwwroot
         publish_branch: gh-pages
         force_orphan: true
 
     - name: Configure GitHub Pages
       run: |
-        git config --global user.email "doctormatt47@gmail.com"
-        git config --global user.name "doctormatt47"
-        echo your-github-username.github.io > build/wwwroot/CNAME
+        echo "doctormatt47.github.io" > ./src/WebUi/build/wwwroot/CNAME
