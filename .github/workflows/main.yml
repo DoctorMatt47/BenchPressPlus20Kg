@@ -18,6 +18,22 @@ jobs:
       with:
         dotnet-version: '8.x'
 
+    - name: Install Node.js (for Tailwind CSS)
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+
+    - name: Install Tailwind CSS and dependencies
+      run: |
+        cd ./src/WebUi
+        npm init -y
+        npm install tailwindcss autoprefixer postcss-cli
+
+    - name: Build Tailwind CSS
+      run: |
+        cd ./src/WebUi
+        npx tailwindcss -i ./wwwroot/css/app.css -o ./wwwroot/css/app.min.css --minify
+
     - name: Restore dependencies
       working-directory: ./src/WebUi
       run: dotnet restore
