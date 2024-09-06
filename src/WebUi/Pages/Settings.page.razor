@@ -64,7 +64,7 @@
     {
         await Repository.SaveUnit(_unit);
         await PlanService.CreatePlan(Weight.FromUnit(_orm, _unit));
-        NavigationManager.NavigateTo($"{NavigationManager.BaseUri.TrimEnd('/')}/plan");
+        NavigationManager.NavigateTo("./plan");
     }
 
 }

@@ -89,7 +89,7 @@
 
         if (plan is null || unit is null)
         {
-            Navigator.NavigateTo($"{Navigator.BaseUri.TrimEnd('/')}/settings");
+            Navigator.NavigateTo("./settings");
         }
 
         Repository.OnChange += StateHasChanged;
@@ -105,7 +105,7 @@
     private async Task Reset()
     {
         await Repository.DeletePlan();
-        Navigator.NavigateTo($"{Navigator.BaseUri.TrimEnd('/')}/settings");
+        Navigator.NavigateTo("./settings");
     }
 
     public void Dispose()

@@ -9,7 +9,7 @@
     {
         var plan = await PlanRepository.GetPlan();
         var uri = plan is null ? "settings" : "plan";
-        NavigationManager.NavigateTo($"{NavigationManager.BaseUri.TrimEnd('/')}/{uri}");
+        NavigationManager.NavigateTo($"./{uri}");
     }
 
 }
