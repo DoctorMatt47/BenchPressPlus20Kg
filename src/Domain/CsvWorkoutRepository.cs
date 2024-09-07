@@ -14,7 +14,12 @@ public class CsvWorkoutRepository(TextReader reader) : IWorkoutRepository
 
     public Task<IEnumerable<Workout>> GetWorkouts(Weight weight)
     {
-        return Task.FromResult(_sheet[weight]);
+        if (!_sheet.TryGetValue(weight, out var workouts))
+        {
+            throw new InvalidOperationException("Incorrect weight");
+        }
+        
+        return Task.FromResult(workouts);
     }
 
     private static Dictionary<Weight, IEnumerable<Workout>> LoadFromCsv(TextReader reader)

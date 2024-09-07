@@ -1,5 +1,4 @@
 ﻿@page "/settings"
-@using System.Text.Json
 @using WebUi.Services
 
 @inject NavigationManager NavigationManager
@@ -9,8 +8,8 @@
 <PageTitle>Settings</PageTitle>
 
 
-<div class="flex h-screen">
-    <div class="mx-2 p-4 bg-slate-800 border-2 border-slate-600 rounded text-center my-auto">
+<div class="flex h-screen items-center justify-center">
+    <div class="mx-2 p-4 bg-slate-800 border-2 border-slate-600 rounded text-center">
         <div class="grid grid-rows-3 gap-2">
             <div class="columns-2">
                 <div>
@@ -36,6 +35,14 @@
                     Generate
                 </button>
             </div>
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                <div class="text-red-500 mt-2">
+                    @_error
+                </div>
+                }
+            <div>
+            </div>
         </div>
     </div>
 </div>
@@ -43,6 +50,7 @@
 @code {
     private decimal _orm = 100;
     private Weight.Unit _unit = Weight.Unit.Kg;
+    private string _error = string.Empty;
 
     private void SetUnit(ChangeEventArgs e)
     {
@@ -63,8 +71,14 @@
     private async Task GeneratePlan()
     {
         await Repository.SaveUnit(_unit);
-        await PlanService.CreatePlan(Weight.FromUnit(_orm, _unit));
-        NavigationManager.NavigateTo("./plan");
+        try
+        {
+            await PlanService.CreatePlan(Weight.FromUnit(_orm, _unit));
+            NavigationManager.NavigateTo("./plan");
+        }
+        catch (InvalidOperationException e)
+        {
+            _error = e.Message; 
+        }
     }
-
 }
